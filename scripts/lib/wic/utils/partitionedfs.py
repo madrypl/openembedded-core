@@ -91,7 +91,7 @@ class Image():
 
     def add_partition(self, size, disk_name, mountpoint, source_file=None, fstype=None,
                       label=None, fsopts=None, boot=False, align=None, no_table=False,
-                      part_type=None, uuid=None, system_id=None):
+                      part_name=None, part_type=None, uuid=None, system_id=None):
         """ Add the next partition. Partitions have to be added in the
         first-to-last order. """
 
@@ -113,6 +113,7 @@ class Image():
                 'boot': boot, # Bootable flag
                 'align': align, # Partition alignment
                 'no_table' : no_table, # Partition does not appear in partition table
+                'part_name' : part_name, # Partition name
                 'part_type' : part_type, # Partition type
                 'uuid': uuid, # Partition UUID
                 'system_id': system_id} # Partition system id
@@ -145,6 +146,11 @@ class Image():
                 # filed at offset 3 of the partition entry.
                 raise ImageError("setting custom partition type is not " \
                                  "implemented for msdos partitions")
+
+            if ptable_format == 'msdos' and part['part_name']:
+                raise ImageError("setting custom partition name is not " \
+                                 "implemented for msdos partitions")
+
 
             # Get the disk where the partition is located
             disk = self.disks[part['disk_name']]
@@ -300,6 +306,13 @@ class Image():
 
             self.__create_partition(disk['disk'].device, part['type'],
                                     parted_fs_type, part['start'], part['size'])
+
+            if part['part_name']:
+                msger.debug("partition %d: set  name to %s" % \
+                            (part['num'], part['part_name']))
+                exec_native_cmd("sgdisk --change-name=%d:%s %s" % \
+                                         (part['num'], part['part_name'],
+                                          disk['disk'].device), self.native_sysroot)
 
             if part['part_type']:
                 msger.debug("partition %d: set type UID to %s" % \

@@ -299,6 +299,7 @@ class DirectImageCreator(BaseImageCreator):
                                        boot=part.active,
                                        align=part.align,
                                        no_table=part.no_table,
+                                       part_name=part.part_name,
                                        part_type=part.part_type,
                                        uuid=part.uuid,
                                        system_id=part.system_id)

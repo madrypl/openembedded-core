@@ -727,6 +727,8 @@ DESCRIPTION
                             equal to 1.
                             The default value is 1.3.
 
+         --part-name: This option is specific to wic. It specifies name for GPT partitions.
+
          --part-type: This option is specific to wic. It specifies partition
                       type GUID for GPT partitions.
                       List of partition type GUIDS can be found here:
